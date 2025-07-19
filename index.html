@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .weather-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    input {
+      padding: 8px;
+      width: 80%;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 8px 15px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #weatherResult img {
+      width: 80px;
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-container">
+    <h2>🌦️ Weather App</h2>
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="weatherResult"></div>
+  </div>
+
+  <script>
+    const apiKey = '36886371a45634ba02f6f1069c782b98'; // Replace with your actual OpenWeatherMap API key
+
+    function getWeather() {
+      const city = document.getElementById('cityInput').value;
+      const weatherDiv = document.getElementById('weatherResult');
+
+      if (!city) {
+        weatherDiv.innerHTML = 'Please enter a city name.';
+        return;
+      }
+
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.cod === '404') {
+            weatherDiv.innerHTML = 'City not found!';
+          } else {
+            const { name } = data;
+            const { temp } = data.main;
+            const { icon, description } = data.weather[0];
+
+            weatherDiv.innerHTML = `
+              <h3>${name}</h3>
+              <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${description}" />
+              <p><strong>${temp}°C</strong></p>
+              <p>${description}</p>
+            `;
+          }
+        })
+        .catch(error => {
+          weatherDiv.innerHTML = 'Something went wrong!';
+          console.error(error);
+        });
+    }
+  </script>
+</body>
+</html>
